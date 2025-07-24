@@ -63,6 +63,11 @@
               "-DCEF_ROOT=${cef}"
             ];
 
+            postInstall = ''
+              mkdir -p $out/bin/Resources/
+              cp -r ${cef}/share/cef/* $out/bin/Resources/
+            '';
+
             patches = [
               ./cmake-cef.patch
             ];
@@ -99,6 +104,9 @@
                 description = "CasparCG Server";
                 after = [ "network.target" ];
                 wantedBy = [ "multi-user.target" ];
+                environment = {
+                  EGL_PLATFORM = "surfaceless";
+                };
                 serviceConfig = {
                   ExecStart = "${cfg.package}/bin/casparcg /etc/casparcg.config";
                   Restart = "always";
