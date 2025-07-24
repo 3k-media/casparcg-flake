@@ -89,7 +89,7 @@
                 description = "The CasparCG Server package to use.";
               };
               config = mkOption {
-                type = types.string;
+                type = types.str;
                 default = "";
                 description = "Configuration for CasparCG Server.";
               };
