@@ -116,7 +116,7 @@
                 wantedBy = [ "multi-user.target" ];
                 environment = {
                   EGL_PLATFORM = "surfaceless";
-                  NDI_RUNTIME_DIR_V6 = "${pkgs.ndi_6}/lib";
+                  NDI_RUNTIME_DIR_V6 = "${pkgs.ndi-6}/lib";
                 };
                 serviceConfig = {
                   ExecStart = "${cfg.package}/bin/casparcg /etc/casparcg.config";
