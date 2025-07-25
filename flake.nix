@@ -116,6 +116,7 @@
                 wantedBy = [ "multi-user.target" ];
                 environment = {
                   EGL_PLATFORM = "surfaceless";
+                  NDI_RUNTIME_DIR_V6 = "${pkgs.ndi_6}/lib";
                 };
                 serviceConfig = {
                   ExecStart = "${cfg.package}/bin/casparcg /etc/casparcg.config";
@@ -124,9 +125,6 @@
                 };
               };
               environment.etc."casparcg.config".text = cfg.config;
-              environment.systemPackages = with pkgs; [
-                  ndi-6
-              ];
             };
           };
       });
