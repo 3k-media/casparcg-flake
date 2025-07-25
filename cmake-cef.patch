@@ -1,5 +1,5 @@
 diff --git a/CMakeModules/Bootstrap_Linux.cmake b/CMakeModules/Bootstrap_Linux.cmake
-index 769cee9ae..cce65d33b 100644
+index 769cee9ae..299730192 100644
 --- a/CMakeModules/Bootstrap_Linux.cmake
 +++ b/CMakeModules/Bootstrap_Linux.cmake
 @@ -48,16 +48,9 @@ endif()
@@ -17,7 +17,7 @@ index 769cee9ae..cce65d33b 100644
 -            "${CEF_LIB_PATH}/libcef_dll_wrapper.a"
 -        )
 +	target_include_directories(CEF::CEF INTERFACE ${CEF_ROOT})
-+	target_link_libraries(CEF::CEF INTERFACE cef cef_dll_wrapper)
++	target_link_libraries(CEF::CEF INTERFACE "${CEF_ROOT}/lib/libcef.so" "${CEF_ROOT}/lib/libcef_dll_wrapper.a")
      else()
          casparcg_add_external_project(cef)
          ExternalProject_Add(cef
