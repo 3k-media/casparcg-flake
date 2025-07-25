@@ -40,7 +40,7 @@
           packages.default = config.packages.casparcg-server;
           packages.casparcg-server = pkgs.stdenv.mkDerivation rec {
             pname = "casparcg-server";
-            version = "2.4.3-stable";
+            version = "2.5.0";
             src = pkgs.fetchFromGitHub {
               owner = "CasparCG";
               repo = "server";
@@ -124,6 +124,9 @@
                 };
               };
               environment.etc."casparcg.config".text = cfg.config;
+              environment.systemPackages = with pkgs; [
+                  ndi-6
+              ];
             };
           };
       });
