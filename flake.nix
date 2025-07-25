@@ -64,8 +64,8 @@
             ];
 
             postInstall = ''
-              mkdir -p $out/bin/Resources/
-              cp -r ${cef}/share/cef/* $out/bin/Resources/
+              mkdir -p $out/bin/
+              cp -r ${cef}/share/cef/* $out/bin/
             '';
 
             patches = [
