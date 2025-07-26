@@ -57,6 +57,7 @@
               cmake
               ninja
               pkg-config
+              autoPatchelfHook
             ];
 
             buildInputs = with pkgs; [
