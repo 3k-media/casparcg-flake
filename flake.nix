@@ -13,6 +13,9 @@
       systems = ["x86_64-linux"];
       perSystem = { system, config, pkgs, ... }:
         {
+          overlayAttrs = {
+              inherit (config.packages) caspercg-server;
+          };
           packages.casparcg-cef = pkgs.cef-binary.overrideAttrs (oldAttrs: {
             version = "131.4.1";
             __intentionallyOverridingVersion = true;
@@ -83,63 +86,5 @@
             ];
           };
         };
-        flake.nixosConfigurations.test = inputs.nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            top.self.nixosModules.default
-            ./test-config.nix
-          ];
-        };
-        flake.nixosModules.default = {config, lib, pkgs, ...}:
-          with lib;
-          let
-            cfg = config.services.casparcg-server;
-          in
-          {
-            options.services.casparcg-server = {
-              enable = mkEnableOption "Enable CasparCG Server";
-              package = mkOption {
-                type = types.package;
-                default = top.self.packages.${pkgs.system}.casparcg-server;
-                description = "The CasparCG Server package to use.";
-              };
-              config = mkOption {
-                type = types.str;
-                default = "";
-                description = "Configuration for CasparCG Server.";
-              };
-              autoStart = mkOption {
-                type = types.bool;
-                default = false;
-                description = "Automatically start CasparCG";
-              };
-            };
-            config = mkIf cfg.enable {
-              users.users.casparcg = {
-                  name = "casparcg";
-                  extraGroups = [ "video" "render" ];
-              };
-              systemd.user.services.casparcg-server = {
-                description = "CasparCG Server";
-                after = [ "network.target" ];
-                wantedBy = [ "graphical-session.target" ];
-                environment = {
-                  NDI_RUNTIME_DIR_V6 = "${pkgs.ndi-6}/lib";
-                };
-                serviceConfig = {
-                  ExecStart = "${cfg.package}/bin/casparcg /etc/casparcg.config";
-                  Restart = "always";
-                  RestartSec = 5;
-                };
-                unitConfig.ConditionUser = "casparcg";
-              };
-              environment.etc."casparcg.config".text = cfg.config;
-            } // mkIf cfg.autoStart {
-              services.displayManager.autoLogin = {
-                enable = true;
-                user = "casparcg";
-              };
-            };
-          };
       });
 }
