@@ -108,14 +108,22 @@
                 default = "";
                 description = "Configuration for CasparCG Server.";
               };
+              autoStart = mkOption {
+                type = types.bool;
+                default = false;
+                description = "Automatically start CasparCG";
+              };
             };
             config = mkIf cfg.enable {
-              systemd.services.casparcg-server = {
+              users.users.casparcg = {
+                  name = "casparcg";
+                  extraGroups = [ "video" "render" ];
+              };
+              systemd.user.services.casparcg-server = {
                 description = "CasparCG Server";
                 after = [ "network.target" ];
-                wantedBy = [ "multi-user.target" ];
+                wantedBy = [ "graphical-session.target" ];
                 environment = {
-                  EGL_PLATFORM = "surfaceless";
                   NDI_RUNTIME_DIR_V6 = "${pkgs.ndi-6}/lib";
                 };
                 serviceConfig = {
@@ -123,8 +131,16 @@
                   Restart = "always";
                   RestartSec = 5;
                 };
+                unitConfig.ConditionUser = "casparcg";
               };
               environment.etc."casparcg.config".text = cfg.config;
+            } // mkIf cfg.autoStart {
+              services.displayManager.autoLogin = {
+                enable = true;
+                user = "casparcg";
+              };
+              services.displayManager.defaultSession = "casparcg";
+              programs.sway.enable = true;
             };
           };
       });
