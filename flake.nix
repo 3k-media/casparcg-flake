@@ -139,8 +139,6 @@
                 enable = true;
                 user = "casparcg";
               };
-              services.displayManager.defaultSession = "casparcg";
-              programs.sway.enable = true;
             };
           };
       });
