@@ -73,6 +73,11 @@
               icu
             ] ++ [ config.packages.casparcg-cef ];
 
+            runtimeDependencies = with pkgs; [
+                ndi-6
+                blackmagic-desktop-video
+            ];
+
             cmakeFlags = [
               "-DUSE_STATIC_BOOST=0"
               "-DUSE_SYSTEM_FFMPEG=1"
