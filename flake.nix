@@ -14,7 +14,7 @@
       perSystem = { system, config, pkgs, ... }:
         {
           overlayAttrs = {
-              inherit (config.packages) caspercg-server;
+              inherit (config.packages) casparcg-server;
           };
           packages.casparcg-cef = pkgs.cef-binary.overrideAttrs (oldAttrs: {
             version = "131.4.1";
