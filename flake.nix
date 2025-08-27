@@ -91,6 +91,50 @@
               ./cmake-cef.patch
             ];
           };
+          packages.casparcg-media-scanner = pkgs.stdenv.mkDerivation (finalAttrs: {
+            pname = "casparcg-media-scanner";
+            version = "1.3.4";
+            src = pkgs.fetchFromGitHub {
+              owner = "CasparCG";
+              repo = "media-scanner";
+              rev = "2208c7bd72d61e5a33176504a0dae8df24ddf18d";
+              hash = "sha256-M+bwU/nV7oZpR+WiYytum8IDAyn+AfqYtshT2dukr20=";
+            };
+
+            nativeBuildInputs = with pkgs; [
+              makeBinaryWrapper
+              yarn-berry_4
+              yarn-berry_4.yarnBerryConfigHook
+            ];
+
+            buildPhase = ''
+              runHook preBuild
+              yarn run build:ts
+              runHook postBuild
+            '';
+
+            installPhase = ''
+              runHook preInstall
+
+              mkdir -p $out/share/casparcg-media-scanner/dist
+              cp -r dist/*.js $out/share/casparcg-media-scanner/dist
+              cp package.json $out/share/casparcg-media-scanner
+              cp -r node_modules $out/share/casparcg-media-scanner
+              makeWrapper ${pkgs.nodejs}/bin/node $out/bin/casparcg-media-scanner \
+                --add-flags $out/share/casparcg-media-scanner/dist/index.js \
+                --add-flags "--paths.ffmpeg=${pkgs.ffmpeg}/bin/ffmpeg" \
+                --add-flags "--paths.ffprobe=${pkgs.ffmpeg}/bin/ffprobe" \
+                --set NODE_ENV production \
+                --set NODE_PATH "$out/share/casparcg-media-scanner/node_modules"
+
+              runHook postInstall
+            '';
+
+            offlineCache = pkgs.yarn-berry_4.fetchYarnBerryDeps {
+              inherit (finalAttrs) src;
+              hash = "sha256-xeCABqD3laTeaTrG+pxL0ENRFTu8Gj/nW8ZvdB6ZSmQ=";
+            };
+          });
         };
       });
 }
