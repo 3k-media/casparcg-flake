@@ -14,7 +14,7 @@
       perSystem = { system, config, pkgs, ... }:
         {
           overlayAttrs = {
-              inherit (config.packages) casparcg-server;
+              inherit (config.packages) casparcg-server casparcg-media-scanner;
           };
           packages.casparcg-cef = pkgs.cef-binary.overrideAttrs (oldAttrs: {
             version = "131.4.1";
