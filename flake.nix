@@ -16,30 +16,30 @@
           overlayAttrs = {
               inherit (config.packages) casparcg-server casparcg-media-scanner;
           };
-          packages.casparcg-cef = pkgs.cef-binary.overrideAttrs (oldAttrs: {
+          packages.casparcg-cef = pkgs.cef-binary.override {
             version = "131.4.1";
-            __intentionallyOverridingVersion = true;
             gitRevision = "437feba";
             chromiumVersion = "131.0.6778.265";
-            srcHash = { x86_64-linux = "sha256-vTBHBJWFwbebzqGFGHEYH0uenLygWoOJW6kLcFSnQIM="; }.${system};
-            installPhase = ''
-                runHook preInstall
+            srcHashes = { x86_64-linux = "sha256-vTBHBJWFwbebzqGFGHEYH0uenLygWoOJW6kLcFSnQIM="; };
+          };
+          #   installPhase = ''
+          #       runHook preInstall
 
-                mkdir -p $out/lib
-                cp libcef_dll_wrapper/libcef_dll_wrapper.a $out/lib/
-                cp ../${oldAttrs.buildType}/libcef.so $out/lib/
-                cp ../${oldAttrs.buildType}/libEGL.so $out/lib/
-                cp ../${oldAttrs.buildType}/libGLESv2.so $out/lib/
-                cp ../${oldAttrs.buildType}/libvk_swiftshader.so $out/lib/
-                cp ../${oldAttrs.buildType}/libvulkan.so.1 $out/lib/
-                cp ../${oldAttrs.buildType}/chrome-sandbox $out/lib/
-                cp ../${oldAttrs.buildType}/*.bin ../${oldAttrs.buildType}/*.json $out/lib/
-                cp -r ../Resources/* $out/lib/
-                cp -r ../include $out/
+          #       mkdir -p $out/lib
+          #       cp build/libcef_dll_wrapper/libcef_dll_wrapper.a $out/lib/
+          #       cp Release/libcef.so $out/lib/
+          #       cp Release/libEGL.so $out/lib/
+          #       cp Release/libGLESv2.so $out/lib/
+          #       cp Release/libvk_swiftshader.so $out/lib/
+          #       cp Release/libvulkan.so.1 $out/lib/
+          #       cp Release/chrome-sandbox $out/lib/
+          #       cp Release/*.bin Release/*.json $out/lib/
+          #       cp -r Resources/* $out/lib/
+          #       cp -r include $out/
 
-                runHook postInstall
-            '';
-          });
+          #       runHook postInstall
+          #   '';
+          # });
           packages.default = config.packages.casparcg-server;
           packages.casparcg-server = pkgs.stdenv.mkDerivation rec {
             pname = "casparcg-server";
@@ -62,7 +62,7 @@
 
             buildInputs = with pkgs; [
               boost
-              ffmpeg
+              ffmpeg_7
               libGL
               glew
               tbb_2022
@@ -83,7 +83,7 @@
               "-DUSE_STATIC_BOOST=0"
               "-DUSE_SYSTEM_FFMPEG=1"
               "-DENABLE_HTML=1"
-              "-DUSE_SYSTEM_CEF=1"
+              "-DUSE_SYSTEM_CEF=0"
               "-DCEF_ROOT=${config.packages.casparcg-cef}"
             ];
 

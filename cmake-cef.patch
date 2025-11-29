@@ -1,23 +1,74 @@
 diff --git a/CMakeModules/Bootstrap_Linux.cmake b/CMakeModules/Bootstrap_Linux.cmake
-index 769cee9ae..299730192 100644
+index 769cee9ae..86ba5165d 100644
 --- a/CMakeModules/Bootstrap_Linux.cmake
 +++ b/CMakeModules/Bootstrap_Linux.cmake
-@@ -48,16 +48,9 @@ endif()
- 
- if (ENABLE_HTML)
-     if (USE_SYSTEM_CEF)
--        set(CEF_LIB_PATH "/usr/lib/casparcg-cef-131")
--
-         add_library(CEF::CEF INTERFACE IMPORTED)
--        target_include_directories(CEF::CEF INTERFACE
--            "/usr/include/casparcg-cef-131"
--        )
--        target_link_libraries(CEF::CEF INTERFACE
--            "-Wl,-rpath,${CEF_LIB_PATH} ${CEF_LIB_PATH}/libcef.so"
--            "${CEF_LIB_PATH}/libcef_dll_wrapper.a"
--        )
-+	target_include_directories(CEF::CEF INTERFACE ${CEF_ROOT})
-+	target_link_libraries(CEF::CEF INTERFACE "${CEF_ROOT}/lib/libcef.so" "${CEF_ROOT}/lib/libcef_dll_wrapper.a")
+@@ -59,45 +59,37 @@ if (ENABLE_HTML)
+             "${CEF_LIB_PATH}/libcef_dll_wrapper.a"
+         )
      else()
-         casparcg_add_external_project(cef)
-         ExternalProject_Add(cef
+-        casparcg_add_external_project(cef)
+-        ExternalProject_Add(cef
+-            URL ${CASPARCG_DOWNLOAD_MIRROR}/cef/cef_binary_131.4.1%2Bg437feba%2Bchromium-131.0.6778.265_linux64_minimal.tar.bz2
+-            URL_HASH SHA1=cbe52ac3c39ef93fdc5021588e12c466e801d9af
+-            DOWNLOAD_DIR ${CASPARCG_DOWNLOAD_CACHE}
+-            CMAKE_ARGS -DUSE_SANDBOX=Off
+-            INSTALL_COMMAND ""
+-            BUILD_BYPRODUCTS
+-                "<SOURCE_DIR>/Release/libcef.so"
+-                "<BINARY_DIR>/libcef_dll_wrapper/libcef_dll_wrapper.a"
+-        )
+-        ExternalProject_Get_Property(cef SOURCE_DIR)
+-        ExternalProject_Get_Property(cef BINARY_DIR)
++        list(APPEND CMAKE_MODULE_PATH "${CEF_ROOT}/cmake")
++        find_package(CEF REQUIRED)
++        add_subdirectory(${CEF_LIBCEF_DLL_WRAPPER_PATH} libcef_dll_wrapper)
++
++        ADD_LOGICAL_TARGET("libcef_lib" "${CEF_LIB_DEBUG}" "${CEF_LIB_RELEASE}")
+ 
+         add_library(CEF::CEF INTERFACE IMPORTED)
+         target_include_directories(CEF::CEF INTERFACE
+-            "${SOURCE_DIR}"
++            "${CEF_ROOT}"
+         )
+         target_link_libraries(CEF::CEF INTERFACE
+-            # Note: All of these must be referenced in the BUILD_BYPRODUCTS above, to satisfy ninja
+-            "${SOURCE_DIR}/Release/libcef.so"
+-            "${BINARY_DIR}/libcef_dll_wrapper/libcef_dll_wrapper.a"
++            libcef_lib
++            libcef_dll_wrapper
++            ${CEF_STANDARD_LIBS}
+         )
+ 
+-        install(DIRECTORY ${SOURCE_DIR}/Resources/locales TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Resources/chrome_100_percent.pak TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Resources/chrome_200_percent.pak TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Resources/icudtl.dat TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Resources/resources.pak TYPE LIB)
+-
+-        install(FILES ${SOURCE_DIR}/Release/chrome-sandbox TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/libcef.so TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/libEGL.so TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/libGLESv2.so TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/libvk_swiftshader.so TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/libvulkan.so.1 TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/snapshot_blob.bin TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/v8_context_snapshot.bin TYPE LIB)
+-        install(FILES ${SOURCE_DIR}/Release/vk_swiftshader_icd.json TYPE LIB)
++        install(DIRECTORY ${CEF_RESOURCE_DIR}/locales TYPE LIB)
++        install(FILES ${CEF_RESOURCE_DIR}/chrome_100_percent.pak TYPE LIB)
++        install(FILES ${CEF_RESOURCE_DIR}/chrome_200_percent.pak TYPE LIB)
++        install(FILES ${CEF_RESOURCE_DIR}/icudtl.dat TYPE LIB)
++        install(FILES ${CEF_RESOURCE_DIR}/resources.pak TYPE LIB)
++
++        install(FILES ${CEF_BINARY_DIR}/chrome-sandbox TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/libcef.so TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/libEGL.so TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/libGLESv2.so TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/libvk_swiftshader.so TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/libvulkan.so.1 TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/snapshot_blob.bin TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/v8_context_snapshot.bin TYPE LIB)
++        install(FILES ${CEF_BINARY_DIR}/vk_swiftshader_icd.json TYPE LIB)
+     endif()
+ endif ()
+ 
