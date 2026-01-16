@@ -42,8 +42,8 @@
             src = pkgs.fetchFromGitHub {
               owner = "CasparCG";
               repo = "server";
-              rev = "ffd41657cae9283df14a3cfa5e5b3c1153e26553";
-              hash = "sha256-/bBd8J+joxETjcemoxpW9UYm4ozJj0dzgLGQFvNK39U=";
+              rev = "v2.5.0-stable";
+              hash = "sha256-1Ch0S5Iwk0knxisI/IgMgklUpAZiiq0VdO98j3yZj+w=";
             };
 
             sourceRoot = "${src.name}/src";
