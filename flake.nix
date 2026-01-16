@@ -16,12 +16,7 @@
           overlayAttrs = {
               inherit (config.packages) casparcg-server casparcg-media-scanner;
           };
-          packages.casparcg-cef = pkgs.cef-binary.override {
-            version = "131.4.1";
-            gitRevision = "437feba";
-            chromiumVersion = "131.0.6778.265";
-            srcHashes = { x86_64-linux = "sha256-vTBHBJWFwbebzqGFGHEYH0uenLygWoOJW6kLcFSnQIM="; };
-          };
+          packages.casparcg-cef = pkgs.cef-binary.override {};
           #   installPhase = ''
           #       runHook preInstall
 
